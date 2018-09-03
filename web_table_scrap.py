@@ -71,14 +71,46 @@ class login:
         return store
         
 
+admin = login('2015301580264','d8bf7006acaf9cd32ae5a6c7e55c49d8')
+admin.log()
 
 
 
 
 
+query_content = admin.query('http://210.42.121.241/stu/choose_PubLsn_list.jsp?XiaoQu=0&credit=0&keyword=&pageNum=25')
+for table_content in query_content.table:
+    print(table_content.string)
+    
+trs = query_content.find_all('tr')
+#设置递归深度
+import sys
+sys.setrecursionlimit(10000)
+
+ulist = []
+for tr in trs:
+    ui = []
+    for td in tr:
+        ui.append(td.string)
+    ulist.append(ui)
+num = 2
+for i, string in zip(range(len(ulist[num])),ulist[num]):
+    print((i,string))
 
 
-
+#添加了扒课程信息的功能，但是剩余/最大人数、备注等html类格式有问题，暂时还没有解决
+# 3 5 7 9 11 13 15 17 19 21 23 
+# 1 3 5 7 9 11 13 15 17 19 21
+#initialize
+from pandas import DataFrame as DF
+lessons_dict = {}
+for i in [3,5,7,9,11,13,15,17,19,21,23]:
+    lessons_dict[ulist[0][i]]=[]
+for j in range(1,len(ulist)):
+    for i in [3,5,7,9,11,13,15,17,19,21,23]:
+        lessons_dict[ulist[0][i]].append(ulist[j][i-2])
+df = DF.from_dict(lessons_dict,orient = 'index').T
+#attach data
 
 #c = test.session.get('http://210.42.121.241/stu/choose_PubLsn_list.jsp?XiaoQu=0&credit=0&keyword=&pageNum=22')
 #
