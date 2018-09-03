@@ -78,11 +78,6 @@ class login:
 
 
 
-test = login('2015301580264','d8bf7006acaf9cd32ae5a6c7e55c49d8')
-test.log()
-bsObj = test.query('http://210.42.121.241/stu/choose_PubLsn_list.jsp?XiaoQu=0&credit=0&keyword=&pageNum=22')
-
-print(bsObj)
 
 
 #c = test.session.get('http://210.42.121.241/stu/choose_PubLsn_list.jsp?XiaoQu=0&credit=0&keyword=&pageNum=22')
