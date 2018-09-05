@@ -12,7 +12,10 @@ from bs4 import BeautifulSoup
 import requests
 from io import BytesIO
 from PIL import Image
-
+from requests_html import HTMLSession
+from pandas import DataFrame as DF
+import sys
+sys.setrecursionlimit(10000)
 
 
 
@@ -54,7 +57,8 @@ class login:
     #    'Referer': 'http://210.42.121.241/servlet/Login',
     #    'Upgrade-Insecure-Requests': '1',
         'User-Agent': 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Mobile Safari/537.36'}
-        self.session = requests.session()
+        #self.session = requests.session()
+        self.session = HTMLSession()
     def log(self):
         yamdata = self.session.get(self.yzm_url, headers=self.yam_headers)  # receive verification code
         tempIm = BytesIO(yamdata.content)  # 将数据流放入tempIm以字节的形式
@@ -65,10 +69,43 @@ class login:
         d = self.session.post(self.post_url, data=self.login_data, headers=self.login_headers)
         d_html = BeautifulSoup(d.text,'lxml')
         print(d_html.find("span",{"id":"term"}).get_text())
-    def query(self,url):
+    def query(self,url,html=False):
+        if html == True:
+            return self.session.get(url)
         store = self.session.get(url)
         store = BeautifulSoup(store.content,'lxml')
         return store
+    
+    def scrap_table(self,url):
+        query_content_html = admin.query(url,html = True)
+        query_content = admin.query(url)
+        
+        trs = query_content.find_all('tr')
+        trs_div = query_content_html.html.find('div')
+        
+        ulist = []
+        for tr in trs:
+            ui = []
+            for td in tr:
+                ui.append(td)
+            ulist.append(ui)
+        
+        #添加了扒课程信息的功能，但是剩余/最大人数、备注等html类格式有问题，暂时还没有解决
+        #已经解决
+        # 3 5 7 9 11 13 15 17 19 21 23 
+        # 1 3 5 7 9 11 13 15 17 19 21
+        #initialize
+        lessons_dict = {}
+        for i in [3,5,7,9,11,13,15,17,19,21,23]:
+            lessons_dict[ulist[0][i].text]=[]
+        #attaching data
+        for j in range(1,len(ulist)):
+            for i in [3,5,7,9,11,13,15,17,19]:#,21,23]:
+                lessons_dict[ulist[0][i].text].append(ulist[j][i-2].text)
+            lessons_dict[ulist[0][21].text].append(trs_div[2*j].text)
+            lessons_dict[ulist[0][23].text].append(trs_div[2*j+1].text)
+        df = DF.from_dict(lessons_dict,orient = 'index').T
+        return df
         
 
 admin = login('2015301580264','d8bf7006acaf9cd32ae5a6c7e55c49d8')
@@ -77,39 +114,16 @@ admin.log()
 
 
 
+url = 'http://210.42.121.241/stu/choose_PubLsn_list.jsp?XiaoQu=0&credit=0&keyword=&pageNum=18'
 
-query_content = admin.query('http://210.42.121.241/stu/choose_PubLsn_list.jsp?XiaoQu=0&credit=0&keyword=&pageNum=25')
-for table_content in query_content.table:
-    print(table_content.string)
-    
-trs = query_content.find_all('tr')
-#设置递归深度
-import sys
-sys.setrecursionlimit(10000)
-
-ulist = []
-for tr in trs:
-    ui = []
-    for td in tr:
-        ui.append(td.string)
-    ulist.append(ui)
-num = 2
-for i, string in zip(range(len(ulist[num])),ulist[num]):
-    print((i,string))
+lessons_table = admin.scrap_table(url)
 
 
-#添加了扒课程信息的功能，但是剩余/最大人数、备注等html类格式有问题，暂时还没有解决
-# 3 5 7 9 11 13 15 17 19 21 23 
-# 1 3 5 7 9 11 13 15 17 19 21
-#initialize
-from pandas import DataFrame as DF
-lessons_dict = {}
-for i in [3,5,7,9,11,13,15,17,19,21,23]:
-    lessons_dict[ulist[0][i]]=[]
-for j in range(1,len(ulist)):
-    for i in [3,5,7,9,11,13,15,17,19,21,23]:
-        lessons_dict[ulist[0][i]].append(ulist[j][i-2])
-df = DF.from_dict(lessons_dict,orient = 'index').T
+
+
+
+
+
 #attach data
 
 #c = test.session.get('http://210.42.121.241/stu/choose_PubLsn_list.jsp?XiaoQu=0&credit=0&keyword=&pageNum=22')
