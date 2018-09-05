@@ -114,9 +114,9 @@ admin.log()
 
 
 
-url = 'http://210.42.121.241/stu/choose_PubLsn_list.jsp?XiaoQu=0&credit=0&keyword=&pageNum=18'
+#url = 'http://210.42.121.241/stu/choose_PubLsn_list.jsp?XiaoQu=0&credit=0&keyword=&pageNum=18'
 
-lessons_table = admin.scrap_table(url)
+#lessons_table = admin.scrap_table(url)
 
 
 
