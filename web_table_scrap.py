@@ -118,6 +118,8 @@ url = 'http://210.42.121.241/stu/choose_PubLsn_list.jsp?XiaoQu=0&credit=0&keywor
 
 lessons_table = admin.scrap_table(url)
 
+#成绩单地址：http://210.42.121.241/servlet/Svlt_QueryStuScore?csrftoken=26795a33-bcc3-33c8-b55b-be3146fbaf49&year=0&term=&learnType=&scoreFlag=0&t=Wed%20Sep%2005%202018%2020:01:51%20GMT+0800%20(%D6%D0%87%F8%98%CB%9C%CA%95r%E9g)
+
 
 
 
