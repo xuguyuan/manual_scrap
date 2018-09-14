@@ -122,10 +122,25 @@ lessons_table = admin.scrap_table(url)
 
 
 
+class testing:
+    
+    test_num = 1
+    test_num2 = 2
+    __testnum6__ = 7#定义后禁止修改变量值
+    
+    def __init__(self, input_num1,input_num2):
+        self.test_num3 = input_num1
+        self.test_num4 = input_num2
+        test_num5 = input_num1
+    def prt(self):
+        print('this is for test')
 
+test = testing(1,2)
 
-
-
+test.test_num = 3
+test.test_num
+test.__testnum6__ = 8
+test.testnum6
 #attach data
 
 #c = test.session.get('http://210.42.121.241/stu/choose_PubLsn_list.jsp?XiaoQu=0&credit=0&keyword=&pageNum=22')
